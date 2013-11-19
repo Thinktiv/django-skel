@@ -135,3 +135,9 @@ SECRET_KEY = environ.get('SECRET_KEY', SECRET_KEY)
 ALLOWED_HOSTS = ['.herokuapp.com']
 ########## END ALLOWED HOST CONFIGURATION
 
+
+########## HTTPS CONFIGURATION
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+# Heroku uses this : https://devcenter.heroku.com/articles/http-routing#heroku-headers
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+########## ENDS HTTPS CONFIGURATION
