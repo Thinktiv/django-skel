@@ -9,6 +9,8 @@ from postgresify import postgresify
 
 from common import *
 
+if environ.get('USE_SSLIFY'):
+    MIDDLEWARE_CLASSES = ( 'sslify.middleware.SSLifyMiddleware', ) + MIDDLEWARE_CLASSES
 
 ########## DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug

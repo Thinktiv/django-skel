@@ -10,3 +10,4 @@ gunicorn==18.0
 jsmin==2.0.3
 newrelic==2.0.0.1
 raven==3.5.0
+django-sslify>=0.2
