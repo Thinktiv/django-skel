@@ -5,29 +5,39 @@ from os import environ
 
 from memcacheify import memcacheify
 from postgresify import postgresify
-from S3 import CallingFormat
+#from S3 import CallingFormat
 
 from common import *
 
 
+########## DEBUG CONFIGURATION
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
+DEBUG = environ.get('DJANGO_DEBUG', False)
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
+TEMPLATE_DEBUG = DEBUG
+########## END DEBUG CONFIGURATION
+
+
 ########## EMAIL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+if environ.get('USE_CELERY_EMAIL'):
+    EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-EMAIL_HOST = environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_HOST = environ.get('EMAIL_HOST', EMAIL_HOST)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-password
-EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD', EMAIL_HOST_PASSWORD)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-host-user
-EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER', 'your_email@example.com')
+EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER', EMAIL_HOST_USER)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-EMAIL_PORT = environ.get('EMAIL_PORT', 587)
+EMAIL_PORT = environ.get('EMAIL_PORT', EMAIL_PORT)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
-EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
+EMAIL_SUBJECT_PREFIX = '[{0}] '.format(SITE_NAME)
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#email-use-tls
 EMAIL_USE_TLS = True
@@ -62,7 +72,10 @@ BROKER_TRANSPORT = 'amqplib'
 # connections total.
 #
 # See: http://docs.celeryproject.org/en/latest/configuration.html#broker-pool-limit
-BROKER_POOL_LIMIT = 3
+try:
+    BROKER_POOL_LIMIT = int(environ.get('BROKER_POOL_LIMIT', 1))
+except Exception:
+    BROKER_POOL_LIMIT = 1
 
 # See: http://docs.celeryproject.org/en/latest/configuration.html#broker-connection-max-retries
 BROKER_CONNECTION_MAX_RETRIES = 0
@@ -74,6 +87,11 @@ BROKER_URL = environ.get('RABBITMQ_URL') or environ.get('CLOUDAMQP_URL')
 # This might create Error loop if Connection Error occurs while establishing connection to ampq
 # Another solution could be to use a backend other than ampq
 #CELERY_RESULT_BACKEND = 'amqp'
+
+# Modules to import and register tasks
+CELERY_IMPORTS = ['libs.periodic_tasks']
+
+CELERY_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 ########## END CELERY CONFIGURATION
 
 
@@ -81,19 +99,23 @@ BROKER_URL = environ.get('RABBITMQ_URL') or environ.get('CLOUDAMQP_URL')
 # See: http://django-storages.readthedocs.org/en/latest/index.html
 INSTALLED_APPS += (
     'storages',
+    'raven.contrib.django.raven_compat',    # Sentry
+    'djcelery_email',
 )
 
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
-STATICFILES_STORAGE = DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'libs.s3.HerokuStaticS3BotoStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
-AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
+#AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
 AWS_ACCESS_KEY_ID = environ.get('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = environ.get('AWS_SECRET_ACCESS_KEY', '')
 AWS_STORAGE_BUCKET_NAME = environ.get('AWS_STORAGE_BUCKET_NAME', '')
-AWS_AUTO_CREATE_BUCKET = True
+AWS_STATIC_STORAGE_BUCKET_NAME = environ.get('AWS_STATIC_STORAGE_BUCKET_NAME', '')
+AWS_AUTO_CREATE_BUCKET = False
 AWS_QUERYSTRING_AUTH = False
 
 # AWS cache settings, don't change unless you know what you're doing:
@@ -104,7 +126,9 @@ AWS_HEADERS = {
 }
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+STATIC_URL = 'https://s3.amazonaws.com/{0}/'.format(AWS_STATIC_STORAGE_BUCKET_NAME)
+
+MEDIA_URL = 'https://s3.amazonaws.com/{0}/'.format(AWS_STORAGE_BUCKET_NAME)
 ########## END STORAGE CONFIGURATION
 
 
@@ -112,18 +136,20 @@ STATIC_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
 # See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_OFFLINE
 COMPRESS_OFFLINE = True
 
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_STORAGE
-COMPRESS_STORAGE = DEFAULT_FILE_STORAGE
+COMPRESS_CSS_FILTERS = [
+# 'compressor.filters.css_default.CssAbsoluteFilter',
+'libs.compress_filters.HerokuCssAbsoluteFilter'
+]
 
 # See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_FILTERS
-COMPRESS_CSS_FILTERS += [
-    'compressor.filters.cssmin.CSSMinFilter',
-]
+#COMPRESS_CSS_FILTERS += [
+#    'compressor.filters.cssmin.CSSMinFilter',
+#]
 
 # See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_JS_FILTERS
-COMPRESS_JS_FILTERS += [
-    'compressor.filters.jsmin.JSMinFilter',
-]
+#COMPRESS_JS_FILTERS += [
+#    'compressor.filters.jsmin.JSMinFilter',
+#]
 ########## END COMPRESSION CONFIGURATION
 
 
@@ -143,3 +169,28 @@ ALLOWED_HOSTS = ['.herokuapp.com']
 # Heroku uses this : https://devcenter.heroku.com/articles/http-routing#heroku-headers
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ########## ENDS HTTPS CONFIGURATION
+
+
+########## SENTRY
+RAVEN_CONFIG = {
+    'dsn': environ.get('SENTRY_DSN'),
+}
+########## END SENTRY
+
+
+########## MICS
+# Robots.txt
+ALLOW_SEARCH_ENGINE_INDEXING = environ.get('ALLOW_SEARCH_ENGINE_INDEXING', True)
+
+#Disable static urls
+EXPOSE_STATIC_URLS = environ.get('EXPOSE_STATIC_URLS', False)
+########## END MISC
+
+
+########## DEPENDANT SETTINGS
+COMPRESS_URL = STATIC_URL
+
+# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_STORAGE
+COMPRESS_STORAGE = STATICFILES_STORAGE
+THUMBNAIL_DEFAULT_STORAGE = DEFAULT_FILE_STORAGE
+########## END DEPENDANT SETTINGS

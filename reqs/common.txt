@@ -1,6 +1,11 @@
 Django>=1.5.0,<=1.5.9
-django-celery==3.0.21
-django-compressor==1.3
-Fabric==1.6.1
-South==0.8.1
+django-celery==3.0.23
+
+#django-compressor==1.3
+#using a patched version of django-compressor for ignoring unused satchmo templates
+git+https://github.com/ayadav/django_compressor.git@af04e5e0494f7c1b9de8799fbc933aee920b3134
+
+Fabric==1.7
+South==0.8.2
 Sphinx==1.1.3
+psycopg2==2.5.1

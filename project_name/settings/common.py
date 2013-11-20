@@ -27,9 +27,6 @@ path.append(DJANGO_ROOT)
 ########## DEBUG CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = False
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
-TEMPLATE_DEBUG = DEBUG
 ########## END DEBUG CONFIGURATION
 
 
@@ -38,9 +35,6 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     ('Your Name', 'your_email@example.com'),
 )
-
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
-MANAGERS = ADMINS
 ########## END MANAGER CONFIGURATION
 
 
@@ -76,7 +70,7 @@ USE_I18N = True
 USE_L10N = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
-USE_TZ = True
+USE_TZ = False  # Default is False, but, purposefully made False to track it
 ########## END GENERAL CONFIGURATION
 
 
@@ -100,6 +94,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     normpath(join(DJANGO_ROOT, 'assets')),
 )
+
+# To Serve The Static Pages
+EXPOSE_STATIC_URLS = True
 
 # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = (
@@ -168,7 +165,7 @@ MIDDLEWARE_CLASSES = (
 
 ########## URL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#root-urlconf
-ROOT_URLCONF = '%s.urls' % SITE_NAME
+ROOT_URLCONF = '{0}.urls'.format(SITE_NAME)
 ########## END URL CONFIGURATION
 
 
@@ -202,51 +199,40 @@ THIRD_PARTY_APPS = (
 )
 
 LOCAL_APPS = (
+    'libs',         # To make template tags work
 )
 
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 ########## END APP CONFIGURATION
+
+
+########## EMAIL CONFIGURATION
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER='your_email@example.com'
+EMAIL_HOST_PASSWORD=''
+DEFAULT_FROM_EMAIL='webmaster.default@example.com'
+########## END EMAIL CONFIGURATION
+
+
+########## SESSION
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+########## END SESSION
 
 
 ########## LOGGING CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-    'require_debug_false': {
-        '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins', 'console'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
-}
+from .logger_settings import *
 ########## END LOGGING CONFIGURATION
 
 
 ########## CELERY CONFIGURATION
-# See: http://celery.readthedocs.org/en/latest/configuration.html#celery-task-result-expires
-CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=30)
-
-# See: http://docs.celeryproject.org/en/master/configuration.html#std:setting-CELERY_CHORD_PROPAGATES
-#CELERY_CHORD_PROPAGATES = True      # Disabled because requires a CELERY_RESULT_BACKEND
+## See: http://celery.readthedocs.org/en/latest/configuration.html#celery-task-result-expires
+#CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=30)
+#
+## See: http://docs.celeryproject.org/en/master/configuration.html#std:setting-CELERY_CHORD_PROPAGATES
+#CELERY_CHORD_PROPAGATES = True     # Disabled because requires a CELERY_RESULT_BACKEND
 
 # See: http://celery.github.com/celery/django/
 setup_loader()
@@ -260,16 +246,62 @@ WSGI_APPLICATION = 'wsgi.application'
 
 
 ########## COMPRESSION CONFIGURATION
+RESOURCE_VERSION = 1
+
 # See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_ENABLED
 COMPRESS_ENABLED = True
 
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_FILTERS
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
+## See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_CSS_FILTERS
+#COMPRESS_CSS_FILTERS = [
+#    'compressor.filters.template.TemplateFilter',
+#]
 
-# See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_JS_FILTERS
-COMPRESS_JS_FILTERS = [
-    'compressor.filters.template.TemplateFilter',
-]
+## See: http://django_compressor.readthedocs.org/en/latest/settings/#django.conf.settings.COMPRESS_JS_FILTERS
+#COMPRESS_JS_FILTERS = [
+#    'compressor.filters.template.TemplateFilter',
+#]
+
+COMPRESS_OUTPUT_DIR = 'compressed'
+
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+    )
+COMPRESS_OFFLINE_IGNORE_FILES = (
+    '.*site-packages.*',  # ignore all external apps templates
+)
+COMPRESS_OFFLINE_MANIFEST = 'manifest_{0}.json'.format(RESOURCE_VERSION)
 ########## END COMPRESSION CONFIGURATION
+
+
+########## STORAGE SETTINGS
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+########## END STORAGE SETTINGS
+
+
+########## MISC
+# Robots.txt
+ALLOW_SEARCH_ENGINE_INDEXING = False
+########## END MISC
+
+
+########## DEPENDANT SETTINGS -
+# These should be defined again if the referenced settings are over-written
+# in prod.py or dev.py
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#template-debug
+TEMPLATE_DEBUG = DEBUG
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
+MANAGERS = ADMINS
+SIGNUP_MAILING_LIST = ADMINS
+
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
+
+THUMBNAIL_DEFAULT_STORAGE = DEFAULT_FILE_STORAGE
+COMPRESS_STORAGE = STATICFILES_STORAGE
+######### END DEPENDANT SETTINGS

@@ -15,25 +15,10 @@ TEMPLATE_DEBUG = DEBUG
 ########## END DEBUG CONFIGURATION
 
 
-########## EMAIL CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-########## END EMAIL CONFIGURATION
-
-
-########## DATABASE CONFIGURATION
-# See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': normpath(join(DJANGO_ROOT, 'default.db')),
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-########## END DATABASE CONFIGURATION
+########### EMAIL CONFIGURATION
+## See: https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+########### END EMAIL CONFIGURATION
 
 
 ########## CACHE CONFIGURATION
@@ -41,18 +26,19 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'project-default'
     }
 }
 ########## END CACHE CONFIGURATION
 
 
-########## CELERY CONFIGURATION
-# See: http://docs.celeryq.org/en/latest/configuration.html#celery-always-eager
-CELERY_ALWAYS_EAGER = True
-
-# See: http://docs.celeryproject.org/en/latest/configuration.html#celery-eager-propagates-exceptions
-CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
-########## END CELERY CONFIGURATION
+########### CELERY CONFIGURATION
+## See: http://docs.celeryq.org/en/latest/configuration.html#celery-always-eager
+#CELERY_ALWAYS_EAGER = True
+#
+## See: http://docs.celeryproject.org/en/latest/configuration.html#celery-eager-propagates-exceptions
+#CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
+########### END CELERY CONFIGURATION
 
 
 ########## TOOLBAR CONFIGURATION
@@ -73,3 +59,10 @@ DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
 }
 ########## END TOOLBAR CONFIGURATION
+
+########## LOCAL DEV SETTINGS
+try:
+    from .dev_local import *
+except ImportError:
+    pass
+##########
