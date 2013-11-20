@@ -71,7 +71,9 @@ BROKER_CONNECTION_MAX_RETRIES = 0
 BROKER_URL = environ.get('RABBITMQ_URL') or environ.get('CLOUDAMQP_URL')
 
 # See: http://docs.celeryproject.org/en/latest/configuration.html#celery-result-backend
-CELERY_RESULT_BACKEND = 'amqp'
+# This might create Error loop if Connection Error occurs while establishing connection to ampq
+# Another solution could be to use a backend other than ampq
+#CELERY_RESULT_BACKEND = 'amqp'
 ########## END CELERY CONFIGURATION
 
 

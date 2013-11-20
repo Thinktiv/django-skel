@@ -246,7 +246,7 @@ LOGGING = {
 CELERY_TASK_RESULT_EXPIRES = timedelta(minutes=30)
 
 # See: http://docs.celeryproject.org/en/master/configuration.html#std:setting-CELERY_CHORD_PROPAGATES
-CELERY_CHORD_PROPAGATES = True
+#CELERY_CHORD_PROPAGATES = True      # Disabled because requires a CELERY_RESULT_BACKEND
 
 # See: http://celery.github.com/celery/django/
 setup_loader()
