@@ -46,7 +46,7 @@ django-skel currently supports Django 1.5. To create a new django-skel base
 project, run the following command (this assumes you have Django 1.5 installed
 already):
 
-    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/master woot
+    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/thinktiv woot
     $ heroku config:add DJANGO_SETTINGS_MODULE=myproject.settings.prod
 
 
