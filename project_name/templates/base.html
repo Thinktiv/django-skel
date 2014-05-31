@@ -1,0 +1,34 @@
+{% load compress %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>{% block title %}{% endblock %}</title>
+
+        {% block styles %}
+        {% endblock %}
+
+        {% block scripts %}
+            {% compress js %}
+                {# Third party JS libs #}
+                <script src="{{ STATIC_URL }}js/sys/jquery-2.1.1.js"></script>
+                <script src="{{ STATIC_URL }}js/sys/jquery.form-3.50.0.js"></script>
+                
+                {# Custom JS libs #}
+                <script src="{{ STATIC_URL }}js/common.js"></script>
+            {% endcompress %}
+        {% endblock %}
+
+        {% block local_scripts %}
+        {% endblock %}
+
+        {% block local_styles %}
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
