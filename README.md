@@ -1,7 +1,7 @@
 django-skel
 ===========
 
-A modern Django (1.5) project skeleton.
+A modern Django (1.6) project skeleton.
 
 ![A fancy Django project skeleton](https://github.com/rdegges/django-skel/raw/master/docs/source/_static/skel.jpg)
 
@@ -42,25 +42,13 @@ project, so be sure to read them before using this boilerplate.
 Install
 =======
 
-django-skel currently supports Django 1.5. To create a new django-skel base
-project, run the following command (this assumes you have Django 1.5 installed
+django-skel currently supports Django 1.6. To create a new django-skel base
+project, run the following command (this assumes you have Django 1.6 installed
 already):
 
-    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/thinktiv woot
-    $ heroku config:add DJANGO_SETTINGS_MODULE=myproject.settings.prod
-
+    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/thinktiv_ec2_1.0.0 woot
 
 Where ``woot`` is the name of the project you'd like to create.
 
-This is possible because Django 1.5's ``startproject`` command allows you to
+This is possible because Django 1.6's ``startproject`` command allows you to
 fetch a project template over HTTP (which is what we're doing here).
-
-While not strictly required, it is also recommended to do
-
-     $ heroku config:add SECRET_KEY=putsomethingfairlycomplexhere
-
-The production settings pull SECRET_KEY from environment but fallbacks
-to a value which is generated mainly for development environment.
-
-This setup allows you to easily keep your site in a public repo if you so 
-wish without causing opening a route to attack your Django passwords.

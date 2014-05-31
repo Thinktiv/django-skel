@@ -1,5 +1,1 @@
 -r reqs/prod.txt
-pylibmc==1.2.3
-
-# A workaround so that compile script in python-build-pack installs mercurial before installing requirements
-# hg+
