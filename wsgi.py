@@ -14,7 +14,7 @@ framework.
 
 """
 import os
-from libs.commons.utils import get_default_django_settings_module
+from {{ project_name }}.libs.commons.utils import get_default_django_settings_module
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", get_default_django_settings_module())

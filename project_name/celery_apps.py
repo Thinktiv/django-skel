@@ -9,6 +9,12 @@ from {{ project_name }}.libs.commons.utils import get_default_django_settings_mo
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', get_default_django_settings_module())
+os.environ.setdefault('DJANGO_CONFIGURATION', 'Settings')
+
+
+from configurations import importer
+importer.install()
+
 
 app = Celery('{{ project_name }}')
 

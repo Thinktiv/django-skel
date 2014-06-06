@@ -46,7 +46,7 @@ django-skel currently supports Django 1.6. To create a new django-skel base
 project, run the following command (this assumes you have Django 1.6 installed
 already):
 
-    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/thinktiv_ec2_1.0.0 woot
+    $ django-admin.py startproject --template=https://github.com/Thinktiv/django-skel/zipball/thinktiv_ec2_1.0 -e py,conf woot
 
 Where ``woot`` is the name of the project you'd like to create.
 

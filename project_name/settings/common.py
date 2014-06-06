@@ -74,7 +74,7 @@ class Settings(LoggerSettingsMixin, Configuration):
 
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
     STATICFILES_DIRS = (
-    normpath(join(DJANGO_ROOT, 'assets')),
+        normpath(join(DJANGO_ROOT, 'assets')),
     )
 
     # To Serve The Static Pages
@@ -183,11 +183,12 @@ class Settings(LoggerSettingsMixin, Configuration):
     ########## EMAIL CONFIGURATION
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = 'your_email@example.com'
-    EMAIL_HOST_PASSWORD = ''
-    DEFAULT_FROM_EMAIL = 'webmaster.default@example.com'
+    EMAIL_HOST = 'smtp.webfaction.com'
+    EMAIL_PORT = 25
+    EMAIL_HOST_USER = 'thinktiv'
+    EMAIL_HOST_PASSWORD = '.th1nkt1v'
+
+    DEFAULT_FROM_EMAIL = 'webmaster@{{ project_name }}.com'
     ########## END EMAIL CONFIGURATION
 
     ########## SESSION
@@ -269,7 +270,7 @@ class Settings(LoggerSettingsMixin, Configuration):
     # See: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
     CELERYBEAT_SCHEDULE = {
         'clear_expired_sessions': {
-            'task': 'libs.periodic_tasks.clear_expired_sessions',
+            'task': 'libs.commons.periodic_tasks.clear_expired_sessions',
             'schedule': crontab(minute=0, hour=6),
         },
     }
