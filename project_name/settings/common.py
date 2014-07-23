@@ -256,7 +256,7 @@ class Settings(LoggerSettingsMixin, Configuration):
 
     ########## STORAGE SETTINGS
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    STATICFILES_STORAGE = 'libs.commons.storage.OverwriteStaticFilesStorage'
     ########## END STORAGE SETTINGS
 
     ########## MISC
