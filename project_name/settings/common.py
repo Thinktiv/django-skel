@@ -254,12 +254,6 @@ class Settings(LoggerSettingsMixin, Configuration):
     ########## END CELERY CONFIGURATION
 
 
-    ########## WSGI CONFIGURATION
-    # See: https://docs.djangoproject.com/en/dev/ref/settings/#wsgi-application
-    WSGI_APPLICATION = 'wsgi.application'
-    ########## END WSGI CONFIGURATION
-
-
     ########## COMPRESSION CONFIGURATION
     RESOURCE_VERSION = 1
 
