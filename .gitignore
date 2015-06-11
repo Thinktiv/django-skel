@@ -8,14 +8,8 @@
 *.swp
 *~
 
-# Sphinx docs:
-build
-
 # SQLite3 database files:
 *.db
-
-# Celerybeat scheduler file:
-celerybeat-schedule
 
 .idea
 .htaccess

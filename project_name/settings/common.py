@@ -8,8 +8,6 @@ from configurations import Configuration
 
 from .logger_settings import LoggerSettingsMixin
 
-from django.core.urlresolvers import reverse_lazy
-
 
 class Settings(LoggerSettingsMixin, Configuration):
     ########## PATH CONFIGURATION
@@ -59,7 +57,7 @@ class Settings(LoggerSettingsMixin, Configuration):
 
     ########## GENERAL CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-    TIME_ZONE = 'America/Chicago'
+    TIME_ZONE = 'Asia/Kolkata'
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
     LANGUAGE_CODE = 'en-us'
