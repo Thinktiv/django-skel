@@ -320,11 +320,9 @@ class Settings(LoggerSettingsMixin, Configuration):
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
     MANAGERS = property(lambda self: self.ADMINS)
-    SIGNUP_MAILING_LIST = property(lambda self: self.ADMINS)
 
     COMPRESS_URL = property(lambda self: self.STATIC_URL)
     COMPRESS_ROOT = property(lambda self: self.STATIC_ROOT)
 
-    THUMBNAIL_DEFAULT_STORAGE = property(lambda self: self.DEFAULT_FILE_STORAGE)
     COMPRESS_STORAGE = property(lambda self: self.STATICFILES_STORAGE)
     ######### END DEPENDANT SETTINGS
