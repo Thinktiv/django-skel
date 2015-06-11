@@ -1,4 +1,4 @@
--r reqs/prod.txt
+-r reqs/local.txt
 
 # A workaround so that compile script in python-build-pack installs mercurial before installing requirements
 # hg+
